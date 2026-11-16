@@ -16,7 +16,7 @@
 import { chromium } from "playwright-core";
 import fs from "node:fs";
 import path from "node:path";
-import { chromeExe, resolveAccount, cdpUrlFor } from "./config.mjs";
+import { chromeExe, resolveAccount, cdpUrlFor, projectFromInput } from "./config.mjs";
 import { UPLOAD_DIR, DOWNLOAD_DIR } from "./paths.mjs";
 import { SELECTORS } from "./selectors.mjs";
 import { ensureBrowser, pickFlowPage, ensureProjectHome, newestTileSignature, openTile, dismissOverlays } from "./generate.mjs";
@@ -86,11 +86,7 @@ export function runUpload(opts = {}) {
 async function enviar(opts, file) {
   // sem conta explícita: a conta ATIVA (onde a última geração aconteceu) — o arquivo gerado está nela
   const account = resolveAccount(opts.account ?? contaAtiva() ?? undefined);
-  const projectUrl = opts.project
-    ? opts.project.startsWith("http")
-      ? opts.project
-      : `https://flow.google.com/project/${opts.project}`
-    : account.projectUrl;
+  const projectUrl = opts.project ? projectFromInput(opts.project) : account.projectUrl;
   const cdpUrl = cdpUrlFor(account);
   const timeout = opts.timeout ?? 120;
 

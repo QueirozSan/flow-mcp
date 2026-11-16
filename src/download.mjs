@@ -18,7 +18,7 @@
 import { chromium } from "playwright-core";
 import path from "node:path";
 import fs from "node:fs";
-import { chromeExe, resolveAccount, cdpUrlFor } from "./config.mjs";
+import { chromeExe, resolveAccount, cdpUrlFor, projectFromInput } from "./config.mjs";
 import { DOWNLOAD_DIR } from "./paths.mjs";
 import { ensureBrowser, pickFlowPage, ensureProjectHome, openNewestTile } from "./generate.mjs";
 import { contaAtiva, marcarUsada } from "./contas.mjs";
@@ -46,11 +46,7 @@ export function runDownload(opts = {}) {
 async function baixar(opts) {
   // sem conta explícita: a conta ATIVA (onde a última geração aconteceu) — o arquivo gerado está nela
   const account = resolveAccount(opts.account ?? contaAtiva() ?? undefined);
-  const projectUrl = opts.project
-    ? opts.project.startsWith("http")
-      ? opts.project
-      : `https://flow.google.com/project/${opts.project}`
-    : account.projectUrl;
+  const projectUrl = opts.project ? projectFromInput(opts.project) : account.projectUrl;
   const cdpUrl = cdpUrlFor(account);
 
   await aguardarVez("download"); // pausa por "atividade incomum" + folga entre ações

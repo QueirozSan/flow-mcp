@@ -30,7 +30,9 @@ function hasCommand(cmd) {
 export function installClaudeCode(name) {
   if (!hasCommand("claude")) return { ok: false, message: "The `claude` command was not found. Install Claude Code, or use --client print and paste the snippet into your client." };
   const e = serverEntry();
-  const r = spawnSync("claude", ["mcp", "add", "--scope", "user", name, "--", e.command, ...e.args], { encoding: "utf8", shell: process.platform === "win32" });
+  const win = process.platform === "win32"; // `claude` is a .cmd shim there, which needs a shell: quote every argument
+  const q = (a) => (win ? `"${a}"` : a);
+  const r = spawnSync("claude", ["mcp", "add", "--scope", "user", name, "--", e.command, ...e.args].map(q), { encoding: "utf8", shell: win });
   const text = `${r.stdout || ""}${r.stderr || ""}`.trim();
   if (r.status === 0) return { ok: true, message: `Registered "${name}" in Claude Code (user scope). Restart Claude Code or run /mcp to see it.` };
   if (/already exists/i.test(text)) return { ok: true, message: `"${name}" is already registered in Claude Code. To re-point it: claude mcp remove ${name} --scope user, then run this command again.` };

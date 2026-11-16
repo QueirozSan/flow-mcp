@@ -7,7 +7,7 @@ import path from "node:path";
 
 const HOME = fs.mkdtempSync(path.join(os.tmpdir(), "flow-mcp-core-"));
 process.env.FLOW_MCP_HOME = HOME;
-const { saveAccount, resolveAccount, listAccounts, readRegistry } = await import("../src/config.mjs");
+const { saveAccount, resolveAccount, listAccounts, readRegistry, projectFromInput } = await import("../src/config.mjs");
 const { escolherConta, marcarSemCredito, marcarUsada, contaAtiva } = await import("../src/contas.mjs");
 const { tempoHumano, proximaVaga, RITMO, trajetoria, tempoLeitura } = await import("../src/humano.mjs");
 const { resolveUploadPath, UPLOAD_DIR } = await import("../src/upload.mjs");
@@ -79,6 +79,14 @@ test("upload fence: only the uploads/downloads folders, only media, no escapes",
 
   assert.throws(() => resolveUploadPath("https://example.com/x.png"), /not found/);
   assert.throws(() => resolveUploadPath(path.join(HOME, "accounts.json")), /must be inside/);
+});
+
+test("project input only accepts Flow project ids / flow.google.com URLs", () => {
+  assert.equal(projectFromInput("0f1e2d3c-4b5a-6978-8a9b"), "https://flow.google.com/project/0f1e2d3c-4b5a-6978-8a9b");
+  assert.equal(projectFromInput("https://flow.google.com/project/abc-123?x=1"), "https://flow.google.com/project/abc-123");
+  for (const bad of ["https://evil.example/project/abc-123", "http://flow.google.com/project/abc-123", "https://flow.google.com.evil.io/project/abc-123", "https://user@flow.google.com/project/abc-123", "javascript:alert(1)", "https://flow.google.com/other", "", "x"]) {
+    assert.throws(() => projectFromInput(bad), /invalid project|only https/, bad);
+  }
 });
 
 test("stale lock detection", () => {

@@ -98,6 +98,21 @@ export function listAccounts() {
   }));
 }
 
+/**
+ * Turns a user/agent-supplied `project` (bare id or URL) into a Flow project URL. Anything that is not an https URL on
+ * flow.google.com is refused: this value is navigated to in a browser that is signed in to the user's Google account.
+ */
+export function projectFromInput(value) {
+  const s = String(value ?? "").trim();
+  if (/^[a-z0-9-]{8,}$/i.test(s)) return `https://flow.google.com/project/${s}`;
+  let u;
+  try { u = new URL(s); } catch { throw new Error(`invalid project "${s}" — pass a Flow project id or a https://flow.google.com/project/<id> URL`); }
+  if (u.protocol !== "https:" || u.hostname !== "flow.google.com" || u.username || u.password || !/^\/(?:[^/]+\/)*project\/[a-z0-9-]+\/?$/i.test(u.pathname)) {
+    throw new Error(`invalid project "${s}" — only https://flow.google.com/project/<id> URLs are accepted`);
+  }
+  return `${u.origin}${u.pathname.replace(/\/$/, "")}`;
+}
+
 export function cdpUrlFor(account) {
   return `http://127.0.0.1:${account.cdpPort}`;
 }

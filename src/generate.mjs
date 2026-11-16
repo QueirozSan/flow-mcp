@@ -25,7 +25,7 @@
 import { chromium } from "playwright-core";
 import fs from "node:fs";
 import path from "node:path";
-import { chromeExe, resolveAccount, cdpUrlFor } from "./config.mjs";
+import { chromeExe, resolveAccount, cdpUrlFor, projectFromInput } from "./config.mjs";
 import { ensureBrowser } from "./browser.mjs";
 import { UPLOAD_DIR } from "./paths.mjs";
 import { runHealthcheck } from "./healthcheck.mjs";
@@ -459,11 +459,7 @@ async function gerarComTroca(opts) {
 
 async function gerarNaConta(opts) {
   const account = resolveAccount(opts.account);
-  const projectUrl = opts.project
-    ? opts.project.startsWith("http")
-      ? opts.project
-      : `https://flow.google.com/project/${opts.project}`
-    : account.projectUrl;
+  const projectUrl = opts.project ? projectFromInput(opts.project) : account.projectUrl;
   const cdpUrl = cdpUrlFor(account);
 
   // ritmo: pausa por "atividade incomum", limites saudáveis do servidor e intervalo mínimo (espera o que faltar)
@@ -550,7 +546,7 @@ export async function main(argv = process.argv.slice(2)) {
   try {
     const result = await runGenerate(args);
     console.log("\nResult:", JSON.stringify(result, null, 2));
-    if (result.status === "finished") console.log("Fetch the file with: node download.mjs [--asset <id>]");
+    if (result.status === "finished") console.log("Save the file with: flow-mcp download [--asset <id>]");
     process.exit(result.status === "timeout" ? 1 : 0);
   } catch (err) {
     console.error("\nFAILED:", err.message);

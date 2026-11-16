@@ -10,7 +10,7 @@
 
 import { chromium } from "playwright-core";
 import path from "node:path";
-import { chromeExe, cdpUrlFor, resolveAccount, saveAccount, removeAccount, readRegistry, ID_RE } from "./config.mjs";
+import { chromeExe, cdpUrlFor, resolveAccount, saveAccount, removeAccount, readRegistry, projectFromInput, ID_RE } from "./config.mjs";
 import { ensureHome } from "./paths.mjs";
 import { ensureBrowser } from "./browser.mjs";
 import { runHealthcheck } from "./healthcheck.mjs";
@@ -50,7 +50,7 @@ export async function runLogin(opts = {}) {
   const name = opts.name || (Object.keys(reg.accounts).length ? null : "main");
   if (!name) throw new Error(`you already have connected account(s) (${Object.keys(reg.accounts).join(", ")}). To add another one, pass a name: flow-mcp login --name <id>. To sign the existing one in again, pass its name.`);
   if (!ID_RE.test(name)) throw new Error(`invalid account name "${name}" — use letters, digits, "-" or "_"`);
-  if (opts.project && !PROJECT_RE.test(opts.project)) throw new Error("--project must be a Flow project URL like https://flow.google.com/project/<id>");
+  if (opts.project) opts = { ...opts, project: projectFromInput(opts.project) };
   const exe = chromeExe(); // fails early with an actionable message
 
   const existed = Boolean(reg.accounts[name]);
