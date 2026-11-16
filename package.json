@@ -23,7 +23,7 @@
     "start": "node bin/flow-mcp.mjs serve",
     "login": "node bin/flow-mcp.mjs login",
     "doctor": "node bin/flow-mcp.mjs doctor",
-    "test": "node --test \"test/*.test.mjs\""
+    "test": "node --test test/core.test.mjs test/server.test.mjs"
   },
   "keywords": ["mcp", "model-context-protocol", "google-flow", "veo", "image-generation", "video-generation", "claude", "playwright"],
   "dependencies": {
