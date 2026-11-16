@@ -1,0 +1,23 @@
+node_modules/
+# Local runtime data (the real data folder is ~/.flow-mcp, outside the repo; these guard against pointing FLOW_MCP_HOME here)
+.flow-mcp/
+profile/
+profiles/
+downloads/
+uploads/
+outputs/
+logs/
+state/
+accounts.json
+conta-ativa.env
+*.log
+.env
+.env.*
+*.key
+*.pem
+*.bak
+*.tmp
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db

@@ -1,0 +1,34 @@
+{
+  "name": "flow-mcp",
+  "version": "1.0.0",
+  "description": "MCP server that lets AI agents generate images and videos in Google Flow, using your own Google account (signed in once in Chrome).",
+  "type": "module",
+  "license": "MIT",
+  "bin": {
+    "flow-mcp": "bin/flow-mcp.mjs"
+  },
+  "files": [
+    "bin",
+    "src",
+    "docs",
+    "README.md",
+    "README.pt-BR.md",
+    "LICENSE",
+    "SECURITY.md"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node bin/flow-mcp.mjs serve",
+    "login": "node bin/flow-mcp.mjs login",
+    "doctor": "node bin/flow-mcp.mjs doctor",
+    "test": "node --test \"test/*.test.mjs\""
+  },
+  "keywords": ["mcp", "model-context-protocol", "google-flow", "veo", "image-generation", "video-generation", "claude", "playwright"],
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "playwright-core": "^1.62.1",
+    "zod": "^4.6.7"
+  }
+}
